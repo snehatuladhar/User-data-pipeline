@@ -1,0 +1,11 @@
+- name: Start and enable Nginx
+  systemd:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: Restart nginx
+  ansiblie.builtin.service:
+    name: nginx
+    enabled: yes
+    state: restarted  
