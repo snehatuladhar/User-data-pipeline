@@ -1,69 +1,63 @@
 name: Upload to S3
 on:
-    push:
-      branches:
-        - INTERN-770 
-    pull_request:
-      branches:
-        - main
+  push:
+    branches:
+      - INTERN-770 
+  pull_request:
+    branches:
+      - main
 
 env:
-    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  
-    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  
-    AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }} 
-    AWS_DEFAULT_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  
+  AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }} 
+  AWS_DEFAULT_REGION: us-east-1
 
 jobs:
-    upload-to-s3:
-      runs-on: ubuntu-latest
+  upload-to-s3:
+    runs-on: ubuntu-latest
         
-      steps:
-        - name: Checkout code 
-          uses: actions/checkout@v3
+    steps:
+      - name: Checkout code 
+        uses: actions/checkout@v3
 
-        - name: Install AWS CLI
-          run: |
-            sudo apt-get update
-            sudo apt install -y awscli  
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt install -y awscli  
     
-        - name: Ensure S3 bucket is created
-          run: |
-            BUCKET_NAME="sneha-tf-test-bucket"
-            if aws s3api head-bucket --bucket $BUCKET_NAME 2>/dev/null; then
-              aws s3 rb s3://$BUCKET_NAME --force
-            fi
-            aws s3api create-bucket --bucket $BUCKET_NAME --region us-east-1    
+      - name: Ensure S3 bucket is created
+        run: |
+          BUCKET_NAME="sneha-tf-test-bucket"
+          if aws s3api head-bucket --bucket $BUCKET_NAME 2>/dev/null; then
+            aws s3 rb s3://$BUCKET_NAME --force
+          fi
+          aws s3api create-bucket --bucket $BUCKET_NAME --region us-east-1    
          
-        - name: Add ansible file to s3
-          run: aws s3 cp ansible/ s3:/sneha-tf-test-bucket  --recursive
+      - name: Add ansible files to S3
+        run: aws s3 cp ansible/ s3://sneha-tf-test-bucket/ --recursive
 
-    create-resources:
-      runs-on: ubuntu-latest
+  create-resources:
+    runs-on: ubuntu-latest
         
-      steps:
-        - name: Checkout 
-          uses: actions/checkout@v3
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
             
-        - name: Install Terraform
-          uses: hashicorp/setup-terraform@v1
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
           
-        - name: Terraform init
-          run: |
-            cd terraform
-            terraform init
+      - name: Terraform init
+        run: |
+          cd terraform
+          terraform init
         
-        - name: Terraform plan
-          run: |
-            cd terraform
-            terraform plan  -var-file="var.tfvars"   
+      - name: Terraform plan
+        run: |
+          cd terraform
+          terraform plan -var-file="var.tfvars"   
 
-        - name: Terraform apply 
-          run: |
-            cd terraform
-            terraform apply -var-file="var.tfvars" -auto-approve      
-
-       
-      
-                
-
-           
+      - name: Terraform apply 
+        run: |
+          cd terraform
+          terraform apply -var-file="var.tfvars" -auto-approve
