@@ -1,6 +1,10 @@
 - name: Install Nginx
   ansible.builtin.command: sudo amazon-linux-extras install nginx1
-  notify: Start and enable Nginx
+- name: Start and enable Nginx
+  systemd:
+    name: nginx
+    enabled: yes
+  state: started
 
 - name: Copy the index.html to web root
   copy:

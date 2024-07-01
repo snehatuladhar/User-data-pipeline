@@ -42,3 +42,17 @@ variable "user_data"{
   description = "The user data script to use for the instance."
   type        = string
 }
+variable "bucket" {
+  description = "The name of the S3 bucket for Terraform state"
+  type        = string
+}
+
+variable "key" {
+  description = "The path to the state file inside the S3 bucket"
+  type        = string
+}
+
+variable "region" {
+  description = "The AWS region where the S3 bucket is located"
+  type        = string
+}

@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
-    bucket = "8586-terraform-state"
-    key    = "sneha/sneha-tfstate"
-    region = "us-east-1"
+    bucket = var.bucket
+    key    = var.key
+    region = var.region
   }
 }
