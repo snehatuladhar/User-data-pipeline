@@ -1,0 +1,6 @@
+
+- name: Restart nginx
+  ansiblie.builtin.service:
+    name: nginx
+    enabled: yes
+    state: restarted  
